@@ -507,6 +507,10 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
         mStepperFeedbackType = StepperFeedbackTypeFactory.createType(mFeedbackTypeMask, this);
     }
 
+    public void setStepState(int position, boolean done, boolean error, boolean current) {
+        mTabsContainer.setStepState(position, done, error, current);
+    }
+
     @SuppressWarnings("RestrictedApi")
     private void init(AttributeSet attrs, @AttrRes int defStyleAttr) {
         initDefaultValues();

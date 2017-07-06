@@ -39,7 +39,10 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY;
 @RestrictTo(LIBRARY)
 public class TabsStepperType extends AbstractStepperType {
 
-    private static final List<CharSequence> EDIT_MODE_STEP_TITLES = Arrays.<CharSequence>asList("Step 1", "Step 2");
+    private static final List<CharSequence> EDIT_MODE_STEP_TITLES = Arrays.<CharSequence>asList(
+            "Step 1",
+            "Step 2"
+    );
 
     private final TabsContainer mTabsContainer;
 

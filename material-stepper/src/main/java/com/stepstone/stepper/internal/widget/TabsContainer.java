@@ -47,47 +47,18 @@ import static android.support.annotation.RestrictTo.Scope.LIBRARY;
 @RestrictTo(LIBRARY)
 public class TabsContainer extends FrameLayout {
 
-    /**
-     * Listeners for actions on individual tabs of the horizontal stepper
-     */
-    public interface TabItemListener {
-
-        /**
-         * Called when a tab gets clicked
-         *
-         * @param position position of the tab/step
-         */
-        @UiThread
-        void onTabClicked(int position);
-
-        TabItemListener NULL = new TabItemListener() {
-            @Override
-            public void onTabClicked(int position) {
-            }
-        };
-    }
-
     @ColorInt
     private int mUnselectedColor;
-
     @ColorInt
     private int mSelectedColor;
-
     @ColorInt
     private int mErrorColor;
-
     private int mDividerWidth = StepperLayout.DEFAULT_TAB_DIVIDER_WIDTH;
-
     private int mContainerLateralPadding;
-
     private HorizontalScrollView mTabsScrollView;
-
     private LinearLayout mTabsInnerContainer;
-
     private TabItemListener mListener = TabItemListener.NULL;
-
     private List<CharSequence> mStepTitles;
-
     private boolean mShowErrorStateOnBack;
 
     public TabsContainer(Context context) {
@@ -110,15 +81,22 @@ public class TabsContainer extends FrameLayout {
                     attrs, R.styleable.TabsContainer, defStyleAttr, 0);
 
             if (a.hasValue(R.styleable.TabsContainer_ms_activeTabColor)) {
-                mSelectedColor = a.getColor(R.styleable.TabsContainer_ms_activeTabColor, mSelectedColor);
+                mSelectedColor = a.getColor(
+                        R.styleable.TabsContainer_ms_activeTabColor,
+                        mSelectedColor
+                );
             }
             if (a.hasValue(R.styleable.TabsContainer_ms_inactiveTabColor)) {
-                mUnselectedColor = a.getColor(R.styleable.TabsContainer_ms_inactiveTabColor, mUnselectedColor);
+                mUnselectedColor = a.getColor(
+                        R.styleable.TabsContainer_ms_inactiveTabColor,
+                        mUnselectedColor
+                );
             }
 
             a.recycle();
         }
-        mContainerLateralPadding = context.getResources().getDimensionPixelOffset(R.dimen.ms_tabs_container_lateral_padding);
+        mContainerLateralPadding = context.getResources()
+                .getDimensionPixelOffset(R.dimen.ms_tabs_container_lateral_padding);
 
         mTabsInnerContainer = (LinearLayout) findViewById(R.id.ms_stepTabsInnerContainer);
         mTabsScrollView = (HorizontalScrollView) findViewById(R.id.ms_stepTabsScrollView);
@@ -161,26 +139,32 @@ public class TabsContainer extends FrameLayout {
 
     /**
      * Changes the position of the current step and updates the UI based on it.
+     *
      * @param currentStepPosition new current step
-     * @param stepErrors map containing error state for step positions
+     * @param stepErrors          map containing error state for step positions
      */
     public void updateSteps(int currentStepPosition, SparseBooleanArray stepErrors) {
         int size = mStepTitles.size();
         for (int i = 0; i < size; i++) {
             StepTab childTab = (StepTab) mTabsInnerContainer.getChildAt(i);
-            boolean done = i < currentStepPosition;
             final boolean current = i == currentStepPosition;
 
             boolean hasError = stepErrors.get(i);
-            childTab.updateState(hasError, done, current);
+            childTab.updateState(hasError, false, current);
             if (current) {
                 mTabsScrollView.smoothScrollTo(childTab.getLeft() - mContainerLateralPadding, 0);
             }
         }
     }
 
+    public void setStepState(int position, boolean done, boolean error, boolean current) {
+        StepTab childTab = (StepTab) mTabsInnerContainer.getChildAt(position);
+        childTab.updateState(error, done, current);
+    }
+
     private View createStepTab(final int position, @Nullable CharSequence title) {
-        StepTab view = (StepTab) LayoutInflater.from(getContext()).inflate(R.layout.ms_step_tab_container, mTabsInnerContainer, false);
+        StepTab view = (StepTab) LayoutInflater.from(getContext())
+                .inflate(R.layout.ms_step_tab_container, mTabsInnerContainer, false);
         view.setStepNumber(String.valueOf(position + 1));
         view.toggleDividerVisibility(!isLastPosition(position));
         view.setStepTitle(title);
@@ -201,5 +185,25 @@ public class TabsContainer extends FrameLayout {
 
     private boolean isLastPosition(int position) {
         return position == mStepTitles.size() - 1;
+    }
+
+    /**
+     * Listeners for actions on individual tabs of the horizontal stepper
+     */
+    public interface TabItemListener {
+
+        TabItemListener NULL = new TabItemListener() {
+            @Override
+            public void onTabClicked(int position) {
+            }
+        };
+
+        /**
+         * Called when a tab gets clicked
+         *
+         * @param position position of the tab/step
+         */
+        @UiThread
+        void onTabClicked(int position);
     }
 }
