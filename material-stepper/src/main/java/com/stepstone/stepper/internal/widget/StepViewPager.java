@@ -41,17 +41,4 @@ public class StepViewPager extends ViewPager {
         super(context, attrs);
         setPageTransformer(false, StepPageTransformerFactory.createPageTransformer(context));
     }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        // Never allow swiping to switch between pages
-        return false;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // Never allow swiping to switch between pages
-        return false;
-    }
-
 }
